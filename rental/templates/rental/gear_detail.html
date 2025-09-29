@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PixelGEAR - {{ gear.name }}</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+<body>
+    <div class="gear-detail-card">
+        <header class="header-bar" style="margin-bottom:2em;">
+            <div class="logo-title">
+                <img src="https://img.icons8.com/ios-filled/50/2a5298/camera.png" alt="PixelGEAR Logo" class="logo">
+                <span class="site-title">PixelGEAR</span>
+            </div>
+        </header>
+        <div class="gear-detail-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;">
+            <h2 class="gear-detail-title">{{ gear.name }}</h2>
+            {% if gear.image %}
+                <img src="{{ gear.image.url }}" alt="{{ gear.name }}" class="gear-detail-image">
+            {% endif %}
+            <div class="gear-detail-info" style="display:flex;flex-direction:column;align-items:center;gap:0.5em;margin-bottom:1em;width:100%;">
+                <span class="gear-detail-category">Category: <b>{{ gear.get_category_display }}</b></span>
+                <span class="gear-detail-brand">Brand: <b>{{ gear.brand }}</b></span>
+                <span class="gear-detail-status">Status: {% if gear.available %}<span style="color:green">Available</span>{% else %}<span style="color:red">Not Available</span>{% endif %}</span>
+            </div>
+            <div class="gear-detail-desc" style="width:100%;text-align:center;">
+                <h3>Description</h3>
+                <p>{{ gear.description }}</p>
+                <h3>Specs</h3>
+                <p>{{ gear.specs }}</p>
+            </div>
+            <div class="gear-detail-actions" style="display:flex;gap:1em;justify-content:center;width:100%;margin-top:1.2em;">
+                {% if can_rent %}
+                    <a href="{% url 'book_rental' gear.id %}" class="btn checkout-btn">Book This Gear</a>
+                {% elif not user.is_authenticated %}
+                    <a href="{% url 'login' %}" class="btn nav-btn">Login to Book</a>
+                {% endif %}
+                <a href="{% url 'catalogue' %}" class="btn nav-btn">Back to Catalogue</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

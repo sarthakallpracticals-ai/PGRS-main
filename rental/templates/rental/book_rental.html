@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Rental - {{ gear.name }}</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+<body>
+    <h1>Book Rental: {{ gear.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Start Date: <input type="date" name="start_date" required></label><br><br>
+        <label>End Date: <input type="date" name="end_date" required></label><br><br>
+        <button type="submit">Book Now</button>
+    </form>
+    <a href="{% url 'gear_detail' gear.id %}">Back to Gear Details</a>
+</body>
+</html>

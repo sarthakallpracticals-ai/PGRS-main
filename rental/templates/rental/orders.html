@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Orders</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+
+<body style="background:#f7f7f7;">
+    <div style="display:flex; flex-direction:column; align-items:center; min-height:100vh;">
+        <div style="width:100%; max-width:700px; margin-top:40px;">
+            <h1 style="text-align:center; font-size:2.2em; font-weight:700; color:#333; margin-bottom:0.5em;">Your Orders</h1>
+            <nav style="display:flex; justify-content:center; gap:2em; margin-bottom:2em;">
+                <a href="{% url 'catalogue' %}" class="nav-link">Catalogue</a>
+                <a href="{% url 'cart' %}" class="nav-link">Current Cart</a>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-btn">Logout</button>
+                </form>
+            </nav>
+            <div class="order-history-container card" style="background:#fff; border-radius:16px; box-shadow:0 2px 16px #0001; padding:2em;">
+                {% if orders %}
+                    {% for order in orders %}
+                    <div class="order-history-card" style="margin-bottom:2em;">
+                        <div class="order-history-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1em;">
+                            <span class="order-history-title" style="font-size:1.2em; font-weight:600;"><img src="https://img.icons8.com/ios-filled/30/ffb86c/shopping-bag.png" style="vertical-align:middle;margin-right:0.5em;">Order #{{ order.id }}</span>
+                            <span class="order-history-date" style="font-size:1em; color:#888;"><img src="https://img.icons8.com/ios-filled/20/ffd600/calendar.png" style="vertical-align:middle;margin-right:0.3em;">{{ order.created_at|date:'Y-m-d H:i' }}</span>
+                        </div>
+                        <div class="order-items-list" style="display:flex; flex-direction:column; gap:1em;">
+                            {% for item in order.items.all %}
+                            <div class="order-item-card" style="display:flex; flex-direction:row; align-items:center; background:#f9f9f9; border-radius:10px; box-shadow:0 1px 6px #0001; padding:1em;">
+                                <div class="order-item-main" style="flex:1; display:flex; align-items:center; gap:1em;">
+                                    <span class="order-item-icon">
+                                        {% if item.gear.category == 'camera' %}
+                                            <img src="https://img.icons8.com/ios-filled/28/ffb86c/camera.png" alt="Camera">
+                                        {% elif item.gear.category == 'lens' %}
+                                            <img src="https://img.icons8.com/ios-filled/28/ffd600/lens.png" alt="Lens">
+                                        {% elif item.gear.category == 'tripod' %}
+                                            <img src="https://img.icons8.com/ios-filled/28/00e676/tripod.png" alt="Tripod">
+                                        {% else %}
+                                            <img src="https://img.icons8.com/ios-filled/28/cccccc/box.png" alt="Other">
+                                        {% endif %}
+                                    </span>
+                                    <span class="order-item-name" style="font-weight:500; font-size:1.1em;">{{ item.gear.name }}</span>
+                                </div>
+                                <div class="order-item-details" style="flex:2; display:flex; flex-direction:row; gap:2em; justify-content:flex-end;">
+                                    <span class="order-item-brand"><strong>Brand:</strong> {{ item.gear.brand }}</span>
+                                    <span class="order-item-category"><strong>Category:</strong> {{ item.gear.get_category_display }}</span>
+                                    <span class="order-item-price"><strong>Price:</strong> ₹{{ item.gear.price }}</span>
+                                    <span class="order-item-qty"><strong>Qty:</strong> {{ item.quantity }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="order-history-empty" style="text-align:center; font-size:1.2em; color:#888; padding:2em;">No orders found.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

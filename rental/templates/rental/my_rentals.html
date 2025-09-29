@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Rentals</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+
+<body style="background:#f7f7f7;">
+    <div style="display:flex; flex-direction:column; align-items:center; min-height:100vh;">
+        <div style="width:100%; max-width:700px; margin-top:40px;">
+            <h1 style="text-align:center; font-size:2.2em; font-weight:700; color:#333; margin-bottom:0.5em;">My Rentals</h1>
+            <nav style="display:flex; justify-content:center; gap:2em; margin-bottom:2em;">
+                <a href="{% url 'catalogue' %}" class="nav-link">Catalogue</a>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-btn">Logout</button>
+                </form>
+            </nav>
+            <div class="rentals-container card" style="background:#fff; border-radius:16px; box-shadow:0 2px 16px #0001; padding:2em;">
+                <ul style="list-style:none; padding:0;">
+                    {% for rental in rentals %}
+                        <li style="margin-bottom:2em;">
+                            <div style="display:flex; flex-direction:column; gap:0.5em;">
+                                <span style="font-size:1.2em; font-weight:600; color:#009688;">{{ rental.gear.name }}</span>
+                                <span style="color:#888;">({{ rental.gear.get_category_display }})</span>
+                                <span style="color:#333;">From: <strong>{{ rental.start_date }}</strong> To: <strong>{{ rental.end_date }}</strong></span>
+                                <span>Status: {% if rental.returned %}<span style="color:green; font-weight:600;">Returned</span>{% else %}<span style="color:orange; font-weight:600;">Active</span>{% endif %}</span>
+                                {% if not rental.returned %}
+                                    {% if rental.end_date < today %}
+                                        <span style="color:red; font-weight:bold;">Rental period expired! Penalty applies.</span>
+                                    {% endif %}
+                                    <form action="{% url 'return_gear' rental.id %}" method="get" style="margin-top:0.5em;">
+                                        <button type="submit" class="btn-primary" style="background:#009688; color:#fff; border-radius:8px; padding:0.5em 1.5em;">Return Gear</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li style="text-align:center; font-size:1.2em; color:#888; padding:2em;">You have no rentals.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

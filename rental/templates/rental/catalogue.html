@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PixelGEAR</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+<body>
+    <header class="header-bar">
+        <div class="logo-title">
+            <img src="https://img.icons8.com/ios-filled/50/2a5298/camera.png" alt="PixelGEAR Logo" class="logo">
+            <span class="site-title">PixelGEAR</span>
+        </div>
+        <nav>
+            {% if user.is_authenticated %}
+                <div class="user-dropdown">
+                    <button class="user-info user-dropdown-btn" onclick="toggleDropdown(event)">
+                        {{ user.username }}{% if user.email %} ({{ user.email }}){% endif %} &#x25BC;
+                    </button>
+                    <div class="user-dropdown-content" id="userDropdownMenu">
+                        <a href="{% url 'my_rentals' %}">My Rentals</a>
+                        <a href="{% url 'orders' %}">Your Orders</a>
+                        <form action="{% url 'logout' %}" method="post" style="margin:0;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-btn" style="width:100%;text-align:left;">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+</body>
+<script>
+function toggleDropdown(e) {
+    e.preventDefault();
+    var menu = document.getElementById('userDropdownMenu');
+    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    document.addEventListener('click', function handler(event) {
+        if (!e.target.contains(event.target) && !menu.contains(event.target)) {
+            menu.style.display = 'none';
+            document.removeEventListener('click', handler);
+        }
+    });
+}
+</script>
+        </nav>
+    </header>
+    <form method="get" class="search-bar">
+        <div style="display:flex;align-items:center;gap:0.5em;width:100%;max-width:600px;">
+            <input type="text" name="q" placeholder="Search gear..." value="{{ query }}" style="flex:2;">
+            <select name="category" style="flex:1;">
+                <option value="">All Categories</option>
+                {% for code, label in categories %}
+                    <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" style="flex:1;min-width:100px;">Search</button>
+        </div>
+    </form>
+    <div class="catalogue-container">
+        {% for gear in gear_list %}
+        <div class="gear-card gear-{{ gear.category }}">
+            <div class="gear-card-header">
+                <span class="gear-icon">
+                    {% if gear.category == 'camera' %}
+                        <img src="https://img.icons8.com/ios-filled/30/ffb86c/camera.png" alt="Camera">
+                    {% elif gear.category == 'lens' %}
+                        <img src="https://img.icons8.com/ios-filled/30/ffd600/lens.png" alt="Lens">
+                    {% elif gear.category == 'tripod' %}
+                        <img src="https://img.icons8.com/ios-filled/30/00e676/tripod.png" alt="Tripod">
+                    {% elif gear.category == 'gimbal' %}
+                        <img src="https://img.icons8.com/ios-filled/30/00bfae/gimbal.png" alt="Gimbal">
+                    {% elif gear.category == 'action_camera' or gear.category == 'gopro' %}
+                        <img src="https://img.icons8.com/ios-filled/30/ff7e5f/action-camera.png" alt="Action Camera">
+                    {% elif gear.category == 'battery' %}
+                        <img src="https://img.icons8.com/ios-filled/30/ff1744/battery.png" alt="Battery">
+                    {% elif gear.category == 'memory_card' %}
+                        <img src="https://img.icons8.com/ios-filled/30/ffb86c/sd-card.png" alt="Memory Card">
+                    {% elif gear.category == 'bag' %}
+                        <img src="https://img.icons8.com/ios-filled/30/444950/backpack.png" alt="Camera Bag">
+                    {% else %}
+                        <img src="https://img.icons8.com/ios-filled/30/cccccc/box.png" alt="Other">
+                    {% endif %}
+                </span>
+                <a href="{% url 'gear_detail' gear.id %}" class="gear-title">{{ gear.name }}</a>
+                <span class="gear-category">{{ gear.get_category_display }}</span>
+            </div>
+            {% if gear.image %}
+                <img src="{{ gear.image.url }}" alt="{{ gear.name }}" class="gear-image">
+            {% endif %}
+            <div class="gear-info">
+                <span class="gear-brand">Brand: {{ gear.brand }}</span>
+                <span class="gear-price">₹{{ gear.price }}</span>
+            </div>
+            <div class="gear-status">
+                {% if gear.available %}<span class="status-available">Available</span>{% else %}<span class="status-unavailable">Not Available</span>{% endif %}
+            </div>
+            <div class="gear-actions" style="display:flex;gap:1em;justify-content:center;align-items:center;">
+                {% if user.is_authenticated and gear.available %}
+                    <form action="{% url 'add_to_cart' gear.id %}" method="post" style="margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn add-cart-btn action-btn">Add to Cart</button>
+                    </form>
+                {% else %}
+                    <button class="btn add-cart-btn action-btn" disabled style="opacity:0.5;cursor:not-allowed;">Add to Cart</button>
+                {% endif %}
+                <a href="{% url 'gear_detail' gear.id %}" class="btn details-btn action-btn">Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-gear">No gear available.</div>
+        {% endfor %}
+    </div>
+</body>
+</html>

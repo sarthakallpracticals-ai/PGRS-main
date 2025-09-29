@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Return Confirmation</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+<body>
+    <h1>Gear Returned Successfully</h1>
+    <p>Your gear <strong>{{ rental.gear.name }}</strong> has been returned.</p>
+    <div style="margin-bottom:1em;">
+        <p><strong>Security Deposit:</strong> ₹{{ rental.deposit_amount }}</p>
+        {% if rental.deposit_refunded %}
+            <p style="color:green;font-weight:bold;">Deposit Refunded</p>
+        {% else %}
+            <p style="color:orange;font-weight:bold;">Deposit Not Refunded{% if penalty > 0 %} (Penalty applied){% endif %}</p>
+        {% endif %}
+    </div>
+    {% if penalty > 0 %}
+        <p style="color:red;font-weight:bold;">Penalty for late return: ₹{{ penalty }}</p>
+    {% endif %}
+    <a href="{% url 'download_rental_invoice' rental.id %}" class="btn checkout-btn" style="margin-right:1em;">Download Invoice</a>
+    <a href="{% url 'my_rentals' %}" class="btn nav-btn">Back to My Rentals</a>
+</body>
+</html>

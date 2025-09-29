@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    {% load static %}
+    <title>Billing Details</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+<body>
+    {% if errors %}
+        <div class="error-messages">
+            <ul>
+                {% for error in errors %}
+                    <li style="color:red; font-weight:bold;">{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <div class="billing-card">
+        <div class="billing-header" style="display:flex; align-items:center; justify-content:center; margin-bottom:1em;">
+            <img src="{{ MEDIA_URL }}gear_images/shopping.webp" alt="PixelGEAR Logo" style="height:48px; width:auto; border-radius:8px; box-shadow:0 2px 8px #0003; background:#232323;">
+        </div>
+        <h2 class="billing-title">Order Summary</h2>
+        <div class="billing-summary">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Brand</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.gear.name }}</td>
+                        <td>{{ item.gear.brand }}</td>
+                        <td>{{ item.gear.get_category_display }}</td>
+                        <td>₹{{ item.gear.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.gear.price|floatformat:2|add:item.quantity|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total:</span>
+                <span class="cart-total-value">₹{{ total }}</span>
+            </div>
+        </div>
+        <h2 class="billing-title">Billing Information</h2>
+        <form method="post" class="billing-form">
+            {% csrf_token %}
+            <div class="billing-fields">
+                 <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required pattern="[A-Za-z ]+" title="Name must contain only letters and spaces.">
+                 <label for="address">Address:</label>
+                 <textarea id="address" name="address" required></textarea>
+                 <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" required pattern="\d{10}" title="Phone must be a 10-digit number.">
+                 <label for="start_date">Rental Start Date:</label>
+                 <input type="date" id="start_date" name="start_date" required>
+                 <label for="end_date">Rental End Date:</label>
+                 <input type="date" id="end_date" name="end_date" required>
+            </div>
+            <button type="submit" class="btn checkout-btn">Confirm & Pay</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order History</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+<body>
+    <h1>Order History</h1>
+    <nav>
+        <a href="{% url 'catalogue' %}">Catalogue</a>
+        <a href="{% url 'cart' %}">Current Cart</a>
+        <form action="{% url 'logout' %}" method="post" style="display:inline; margin-left:1em;">
+            {% csrf_token %}
+            <button type="submit" class="nav-btn">Logout</button>
+        </form>
+    </nav>
+    <div class="cart-history-container">
+        {% if carts %}
+            {% for cart in carts %}
+            <div class="cart-history-card">
+                <form action="{% url 'delete_cart' cart.id %}" method="post" style="float:right;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn" style="background:#ff1744;color:#fff;">Delete Cart</button>
+                </form>
+                <div class="cart-history-header">
+                    <span class="cart-history-title">Cart #{{ cart.id }}</span>
+                    <span class="cart-history-date">{{ cart.created_at|date:'Y-m-d H:i' }}</span>
+                </div>
+                <table class="cart-history-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart.items.all %}
+                        <tr>
+                            <td>{{ item.gear.name }}</td>
+                            <td>{{ item.gear.brand }}</td>
+                            <td>{{ item.gear.get_category_display }}</td>
+                            <td>₹{{ item.gear.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="cart-history-empty">No order history found.</div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Cart</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+
+
+
+<body style="background:#181818;">
+    <div style="display:flex; flex-direction:column; align-items:center; min-height:100vh; background:#181818;">
+        <div style="width:100%; max-width:700px; margin-top:40px;">
+            <h1 style="text-align:center; font-size:2.2em; font-weight:700; color:#ffb86c; margin-bottom:0.5em;">My Cart</h1>
+            <nav style="display:flex; justify-content:center; gap:2em; margin-bottom:2em;">
+                <a href="{% url 'catalogue' %}" class="nav-link" style="color:#ffb86c; font-weight:500; text-decoration:none;">Catalogue</a>
+                <a href="{% url 'cart_history' %}" class="nav-link" style="color:#ffb86c; font-weight:500; text-decoration:none;">Cart History</a>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-btn" style="background:#232323; color:#ffb86c; border-radius:12px; font-weight:500; padding:1em 2em; box-shadow:0 2px 8px #0002;">Logout</button>
+                </form>
+            </nav>
+            <div class="cart-container card" style="background:#232323; border-radius:16px; box-shadow:0 2px 16px #0003; padding:2em; display:flex; flex-direction:column; align-items:center;">
+                {% if items %}
+                <div style="width:100%; overflow-x:auto;">
+                <table class="cart-table" style="width:100%; margin-bottom:1.5em; border-radius:10px; overflow:hidden; border-collapse:separate; border-spacing:0; background:#232323; color:#fff;">
+                    <thead>
+                        <tr style="background:#2c2c2c; color:#ffb86c;">
+                            <th style="padding:1em 0; text-align:center;">Item</th>
+                            <th style="text-align:center;">Brand</th>
+                            <th style="text-align:center;">Category</th>
+                            <th style="text-align:center;">Price</th>
+                            <th style="text-align:center;">Quantity</th>
+                            <th style="text-align:center;">Subtotal</th>
+                            <th style="text-align:center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr style="background:#232323; color:#fff; text-align:center;">
+                            <td style="padding:0.8em 0;">{{ item.gear.name }}</td>
+                            <td>{{ item.gear.brand }}</td>
+                            <td>{{ item.gear.get_category_display }}</td>
+                            <td>₹{{ item.gear.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>₹{{ item.gear.price|floatformat:2|add:item.quantity|floatformat:2 }}</td>
+                            <td>
+                                <form action="{% url 'delete_cart_item' item.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn" style="background:#ff1744;color:#fff; border-radius:8px; font-weight:500; padding:0.5em 1.5em; box-shadow:0 2px 8px #0002;">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                <div class="cart-total-row" style="display:flex; justify-content:flex-end; align-items:center; margin-bottom:1.5em; width:100%;">
+                    <span class="cart-total-label" style="font-weight:600; font-size:1.1em; margin-right:1em; color:#ffb86c;">Total:</span>
+                    <span class="cart-total-value" style="font-size:1.2em; color:#00e6a0; font-weight:700;">₹{{ total }}</span>
+                </div>
+                <form action="{% url 'checkout_cart' %}" method="post" class="checkout-form" style="text-align:center; width:100%;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn checkout-btn" style="background:#00e6a0; color:#232323; font-size:1.1em; border-radius:12px; font-weight:600; padding:0.8em 2.5em; box-shadow:0 2px 8px #0002; width:50%; margin:0 auto;">Checkout</button>
+                </form>
+                {% else %}
+                <div class="cart-empty" style="text-align:center; font-size:1.2em; color:#888; padding:2em;">Your cart is empty.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

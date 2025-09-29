@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    {% load static %}
+    <title>PixelGEAR - Register</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+<body>
+    <div class="auth-card">
+        <div class="auth-logo-title">
+            <img src="https://img.icons8.com/ios-filled/50/ffb86c/camera.png" alt="Camera Icon" class="logo">
+            <span class="site-title">PixelGEAR</span>
+        </div>
+        <h2 class="auth-title">Create Account</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="auth-fields">{{ form.as_p }}</div>
+            <button type="submit" class="btn auth-btn">Register</button>
+        </form>
+        <div class="auth-link">
+            <a href="{% url 'login' %}">Already have an account? Login</a>
+        </div>
+    </div>
+</body>
+</html>

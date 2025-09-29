@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Return Gear</title>
+    <link rel="stylesheet" href="/static/rental/style.css">
+</head>
+<body>
+    <h1>Return Gear: {{ rental.gear.name }}</h1>
+    <nav>
+        <a href="{% url 'my_rentals' %}">Back to My Rentals</a>
+    </nav>
+    <div class="guidelines-box">
+        <h2>Return Guidelines & Policies</h2>
+        <ul>
+            {% for rule in guidelines %}
+                <li>{{ rule }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <form method="post" style="margin-top:2em;">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary">Confirm Return</button>
+    </form>
+</body>
+</html>
